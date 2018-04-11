@@ -1,6 +1,10 @@
 # Hangfire.Contrib
 Useful and opinionated set of ASP.NET Core integration extensions for Hangfire.
 
+| Windows | Linux |
+| --- | --- |
+| [![Windows Build status](https://ci.appveyor.com/api/projects/status/49lhxdj0nuu5x9fe?svg=true)](https://ci.appveyor.com/project/henkmollema/hangfire-contrib) | [![Linux Build Status](https://travis-ci.org/webenablebv/Hangfire.Contrib.svg?branch=master)](https://travis-ci.org/webenablebv/Hangfire.Contrib) |
+
 ## Introduction
 Hangfire.Contrib provides a set of useful extensions to provide a nice Hangfire integration experience in ASP.NET Core 2.1+ (currently in preview). 
 
