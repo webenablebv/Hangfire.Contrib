@@ -7,7 +7,7 @@ Hangfire.Contrib provides a set of useful extensions to provide a nice Hangfire 
 ### Key features
 - Automatic scheduling of jobs
 - [ASP.NET Core Logging](https://github.com/aspnet/Logging) integration (`ILogger<T>`) with [Hangfire.Console](https://github.com/pieceofsummer/Hangfire.Console)
-- Easy IP-based dashboard authorization filter or custom auhtorization callback
+- Easy IP-based dashboard authorization filter or custom authorization callback
 
 ## Installation
 Hangfire.Contrib is [available on NuGet](https://www.nuget.org/packages/Webenable.Hangfire.Contrib):
