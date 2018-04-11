@@ -39,7 +39,7 @@ public class Startup
 }
 ```
 
-By default the Hangfire server and dashboard are enabled. The dashboard is configuredwithout a custom dashboard authorization filter, which means only local requests have access.
+By default the Hangfire server and dashboard are enabled. The dashboard is configured without a custom dashboard authorization filter, which means only local requests have access.
 
 ### Creating jobs
 
