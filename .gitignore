@@ -1,0 +1,16 @@
+[Oo]bj/
+[Bb]in/
+.nuget/
+packages/
+artifacts/
+pack/
+PublishProfiles/
+.vs/
+*.user
+*.suo
+*.userprefs
+*DS_Store
+.settings
+*.sln.ide
+.build/
+*.ldf
