@@ -5,10 +5,13 @@ using Webenable.Hangfire.Contrib.Internal;
 
 namespace Webenable.Hangfire.Contrib
 {
+    /// <summary>
+    /// Extensions for logging in Hangfire jobs.
+    /// </summary>
     public static class HangfireExtensions
     {
         /// <summary>
-        /// Begins a logical operation scope for the given <see cref="PerformContext"/>.
+        /// Begins a logical operation scope for the given <see cref="PerformContext"/> within the scope of a job.
         /// </summary>
         /// <param name="logger">The <see cref="ILogger"/> instance.</param>
         /// <param name="performContext">The <see cref="PerformContext"/> instance for the job.</param>
