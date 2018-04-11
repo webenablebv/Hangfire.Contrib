@@ -1,7 +1,7 @@
 ﻿namespace Webenable.Hangfire.Contrib
 {
     /// <summary>
-    /// Contains constant CRON expressions for convience use in <see cref="AutoScheduleAttribute"/>.
+    /// Contains constant CRON expressions for convenience use in <see cref="AutoScheduleAttribute"/>.
     /// </summary>
     public static class Crons
     {
@@ -28,7 +28,7 @@
         /// <summary>
         /// Every first day of the month at 00:00.
         /// </summary>
-        public const string Montyly = "0 0 1 * *";
+        public const string Monthly = "0 0 1 * *";
 
         /// <summary>
         /// Every year on January 1st at 00:00.

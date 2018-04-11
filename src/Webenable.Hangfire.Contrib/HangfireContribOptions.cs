@@ -20,8 +20,14 @@ namespace Webenable.Hangfire.Contrib
         /// </summary>
         public Assembly[] ScanningAssemblies { get; set; }
 
+        /// <summary>
+        /// Gets or sets options for the Hangfire dashboard.
+        /// </summary>
         public DasbhoardOptions Dasbhoard { get; set; } = new DasbhoardOptions();
 
+        /// <summary>
+        /// Defines options for the Hangfire dashboard.
+        /// </summary>
         public class DasbhoardOptions
         {
             /// <summary>
@@ -35,7 +41,7 @@ namespace Webenable.Hangfire.Contrib
             public bool EnableAuthorization { get; set; }
 
             /// <summary>
-            /// Gets or sets a callback which gets invoked when auhtorizing a dashboard request.
+            /// Gets or sets a callback which gets invoked when authorizing a dashboard request.
             /// If not specified, the default authorization polcy is IP-based using <see cref="AllowedIps"/> when IP-addresses are specified.
             /// </summary>
             public Func<HttpContext, bool> AuthorizationCallback { get; set; }
