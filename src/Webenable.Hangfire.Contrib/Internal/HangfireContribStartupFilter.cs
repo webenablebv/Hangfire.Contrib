@@ -12,13 +12,22 @@ namespace Webenable.Hangfire.Contrib.Internal
 {
     public class HangfireContribStartupFilter : IStartupFilter
     {
-        private readonly HangfireContribOptions _options;
+        private readonly HangfireContribOptions _contribOptions;
+        private readonly BackgroundJobServerOptions _backgroundJobServerOptions;
+        private readonly DashboardOptions _dashboardOptions;
         private readonly IRecurringJobManager _recurringJobManager;
         private readonly ILogger<HangfireContribStartupFilter> _logger;
 
-        public HangfireContribStartupFilter(IOptions<HangfireContribOptions> options, IRecurringJobManager recurringJobManager, ILogger<HangfireContribStartupFilter> logger)
+        public HangfireContribStartupFilter(
+            IOptions<HangfireContribOptions> options,
+            IOptions<BackgroundJobServerOptions> backgroundJobServerOptions,
+            IOptions<DashboardOptions> dashboardOptions,
+            IRecurringJobManager recurringJobManager,
+            ILogger<HangfireContribStartupFilter> logger)
         {
-            _options = options.Value;
+            _contribOptions = options.Value;
+            _backgroundJobServerOptions = backgroundJobServerOptions?.Value;
+            _dashboardOptions = dashboardOptions?.Value;
             _recurringJobManager = recurringJobManager;
             _logger = logger;
         }
@@ -28,13 +37,13 @@ namespace Webenable.Hangfire.Contrib.Internal
             {
                 next(app);
 
-                if (_options.EnableServer)
+                if (_contribOptions.EnableServer)
                 {
                     _logger.LogInformation("Enabling Hangfire server");
-                    app.UseHangfireServer();
+                    app.UseHangfireServer(_backgroundJobServerOptions);
                 }
 
-                if (_options.Dasbhoard.Enabled)
+                if (_contribOptions.Dasbhoard.Enabled)
                 {
                     ConfigureDashboard(app);
                 }
@@ -45,21 +54,21 @@ namespace Webenable.Hangfire.Contrib.Internal
         private void ConfigureDashboard(IApplicationBuilder app)
         {
             _logger.LogInformation("Enabling Hangfire dashboard");
-            var dashboardOptions = new DashboardOptions();
-            if (_options.Dasbhoard.EnableAuthorization)
+            var dashboardOptions = _dashboardOptions ?? new DashboardOptions();
+            if (_contribOptions.Dasbhoard.EnableAuthorization)
             {
                 var loggerFactory = app.ApplicationServices.GetRequiredService<ILoggerFactory>();
 
                 DashboardAuthorizationFilter dashboardAuthorizationFilter;
-                if (_options.Dasbhoard.AuthorizationCallback != null)
+                if (_contribOptions.Dasbhoard.AuthorizationCallback != null)
                 {
                     _logger.LogInformation("Configuring Hangfire dashboard authorization with custom callback");
-                    dashboardAuthorizationFilter = new DashboardAuthorizationFilter(_options.Dasbhoard.AuthorizationCallback, loggerFactory);
+                    dashboardAuthorizationFilter = new DashboardAuthorizationFilter(_contribOptions.Dasbhoard.AuthorizationCallback, loggerFactory);
                 }
-                else if (_options.Dasbhoard.AllowedIps?.Length > 0)
+                else if (_contribOptions.Dasbhoard.AllowedIps?.Length > 0)
                 {
                     _logger.LogInformation("Configuring Hangfire IP-based dashboard authorization");
-                    dashboardAuthorizationFilter = new DashboardAuthorizationFilter(app.ApplicationServices.GetRequiredService<IHostingEnvironment>(), _options.Dasbhoard.AllowedIps, loggerFactory);
+                    dashboardAuthorizationFilter = new DashboardAuthorizationFilter(app.ApplicationServices.GetRequiredService<IHostingEnvironment>(), _contribOptions.Dasbhoard.AllowedIps, loggerFactory);
                 }
                 else
                 {
@@ -80,7 +89,7 @@ namespace Webenable.Hangfire.Contrib.Internal
             {
                 var sp = scope.ServiceProvider;
                 var hangfireJobType = typeof(HangfireJob);
-                foreach (var assembly in _options.ScanningAssemblies)
+                foreach (var assembly in _contribOptions.ScanningAssemblies)
                 {
                     foreach (var candidate in assembly.ExportedTypes)
                     {

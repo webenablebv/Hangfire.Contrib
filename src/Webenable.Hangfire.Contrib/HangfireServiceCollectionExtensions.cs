@@ -30,6 +30,11 @@ namespace Webenable.Hangfire.Contrib
                 configAction?.Invoke(c);
             });
 
+            // Add Hangfire options instances to the ASP.NET options infrastructure
+            services.Configure<BackgroundJobServerOptions>(o => { });
+            services.Configure<DashboardOptions>(o => { });
+
+            // Configure default options for Hangfire.Contrib
             services.Configure<HangfireContribOptions>(o =>
             {
                 o.EnableServer = true;
