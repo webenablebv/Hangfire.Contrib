@@ -1,10 +1,10 @@
 language: csharp
 mono: none
-dotnet: 2.1.300 # This seems to resolve to the 2.1.300-rc1 SDK on Linux
+dotnet: 2.1.300
 dist: trusty
 os:
   - linux
-  #- osx # macOS builds fails since it cannot find 2.1.300
+  - osx
 osx_image: xcode8.2
 before_script:
   - chmod +x ./build.sh
