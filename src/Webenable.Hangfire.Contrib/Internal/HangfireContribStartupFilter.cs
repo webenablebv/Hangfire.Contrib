@@ -35,8 +35,6 @@ namespace Webenable.Hangfire.Contrib.Internal
         public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next) =>
             app =>
             {
-                next(app);
-
                 if (_contribOptions.EnableServer)
                 {
                     _logger.LogInformation("Enabling Hangfire server");
@@ -49,6 +47,8 @@ namespace Webenable.Hangfire.Contrib.Internal
                 }
 
                 RegisterJobs(app);
+
+                next(app);
             };
 
         private void ConfigureDashboard(IApplicationBuilder app)
