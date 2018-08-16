@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <VersionPrefix>1.0.1</VersionPrefix>
+    <VersionPrefix>1.0.2</VersionPrefix>
     <LangVersion>latest</LangVersion>
     <Description>Useful and opinionated set of ASP.NET Core integration extensions for Hangfire.</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
