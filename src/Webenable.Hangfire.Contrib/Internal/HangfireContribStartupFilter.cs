@@ -93,6 +93,12 @@ namespace Webenable.Hangfire.Contrib.Internal
                 {
                     foreach (var candidate in assembly.ExportedTypes)
                     {
+                        if (candidate.IsAbstract)
+                        {
+                            // Skip abstract types
+                            continue;
+                        }
+
                         if (hangfireJobType.IsAssignableFrom(candidate) && candidate != hangfireJobType)
                         {
                             try
