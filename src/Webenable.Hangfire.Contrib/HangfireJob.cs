@@ -42,13 +42,14 @@ namespace Webenable.Hangfire.Contrib
             PerformContext = performContext;
             var jobId = performContext.BackgroundJob.Id;
 
+            cancellationToken.ThrowIfCancellationRequested();
             using (Logger.BeginScope("Job {JobId}", jobId))
             using (Logger.BeginJobScope(performContext))
             {
                 Logger.LogInformation("Starting job {JobId}", jobId);
                 try
                 {
-                    await ExecuteCoreAsync(cancellationToken?.ShutdownToken ?? default);
+                    await ExecuteCoreAsync(cancellationToken ?? JobCancellationToken.Null);
                     Logger.LogInformation("Finished job {JobId}", jobId);
                 }
                 catch (Exception ex)
@@ -62,8 +63,8 @@ namespace Webenable.Hangfire.Contrib
         /// <summary>
         /// Executes the inner logic of the job.
         /// </summary>
-        /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
-        protected abstract Task ExecuteCoreAsync(CancellationToken cancellationToken);
+        /// <param name="cancellationToken">The <see cref="IJobCancellationToken"/>.</param>
+        protected abstract Task ExecuteCoreAsync(IJobCancellationToken cancellationToken);
 
         /// <summary>
         /// Gets the schedule for automatically scheduled jobs.

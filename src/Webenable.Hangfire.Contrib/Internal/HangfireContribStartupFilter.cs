@@ -81,7 +81,7 @@ namespace Webenable.Hangfire.Contrib.Internal
             app.UseHangfireDashboard(options: dashboardOptions);
         }
 
-        private static MethodInfo _executeMethod = typeof(HangfireJob).GetMethod(nameof(HangfireJob.ExecuteAsync));
+        private static readonly MethodInfo _executeMethod = typeof(HangfireJob).GetMethod(nameof(HangfireJob.ExecuteAsync));
 
         private void RegisterJobs(IApplicationBuilder app)
         {
@@ -107,7 +107,10 @@ namespace Webenable.Hangfire.Contrib.Internal
                                 if (!string.IsNullOrEmpty(jobInstance.Schedule))
                                 {
                                     _logger.LogInformation("Auto-scheduling job {JobName} with schedule {JobSchedule}", candidate.Name, jobInstance.Schedule);
-                                    _recurringJobManager.AddOrUpdate(candidate.Name, new Job(candidate, _executeMethod, null, null), jobInstance.Schedule);
+                                    _recurringJobManager.AddOrUpdate(
+                                        candidate.Name,
+                                        new Job(candidate, _executeMethod, null, null),
+                                        jobInstance.Schedule);
                                 }
                                 else
                                 {
