@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <VersionPrefix>1.0.2</VersionPrefix>
@@ -13,13 +13,12 @@
     <Authors>Webenable B.V.;Henk Mollema</Authors>
     <PackageTags>hangfire;aspnetcore;logging</PackageTags>
     <NoWarn>CS1591</NoWarn>
-    <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Ben.Demystifier" Version="0.1.1" />
-    <PackageReference Include="Hangfire.Core" Version="1.6.19" />
-    <PackageReference Include="Hangfire.AspNetCore" Version="1.6.19" />
-    <PackageReference Include="Hangfire.Console" Version="1.3.10" />
+    <PackageReference Include="Hangfire.Core" Version="1.6.20" />
+    <PackageReference Include="Hangfire.AspNetCore" Version="1.6.20" />
+    <PackageReference Include="Hangfire.Console" Version="1.4.1" />
     <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.1.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="2.1.0" />
   </ItemGroup>
