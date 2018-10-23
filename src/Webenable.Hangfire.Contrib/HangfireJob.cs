@@ -65,11 +65,11 @@ namespace Webenable.Hangfire.Contrib
                 performContextScope = Logger.BeginJobScope(performContext);
             }
 
-            Logger.LogInformation("Starting job {JobId}", jobId);
+            Logger.LogDebug("Starting job {JobId}", jobId);
             try
             {
                 await ExecuteCoreAsync(cancellationToken ?? new JobCancellationToken(false));
-                Logger.LogInformation("Finished job {JobId}", jobId);
+                Logger.LogDebug("Finished job {JobId}", jobId);
             }
             catch (Exception ex)
             {
