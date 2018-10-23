@@ -5,7 +5,11 @@ VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{723AD819-250C-49A2-8544-017EE4A009D7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Webenable.Hangfire.Contrib", "src\Webenable.Hangfire.Contrib\Webenable.Hangfire.Contrib.csproj", "{49B54C74-8F83-450A-8A65-C4C67962D846}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Webenable.Hangfire.Contrib", "src\Webenable.Hangfire.Contrib\Webenable.Hangfire.Contrib.csproj", "{49B54C74-8F83-450A-8A65-C4C67962D846}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{087E1B64-FA04-4883-8300-191539D43BDE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Webenable.Hangfire.Contrib.Tests", "test\Webenable.Hangfire.Contrib.Tests\Webenable.Hangfire.Contrib.Tests.csproj", "{8EAAEA35-FC4F-41FD-AA24-0C9C86996949}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +19,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{49B54C74-8F83-450A-8A65-C4C67962D846}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -32,8 +33,27 @@ Global
 		{49B54C74-8F83-450A-8A65-C4C67962D846}.Release|x64.Build.0 = Release|Any CPU
 		{49B54C74-8F83-450A-8A65-C4C67962D846}.Release|x86.ActiveCfg = Release|Any CPU
 		{49B54C74-8F83-450A-8A65-C4C67962D846}.Release|x86.Build.0 = Release|Any CPU
+		{8EAAEA35-FC4F-41FD-AA24-0C9C86996949}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8EAAEA35-FC4F-41FD-AA24-0C9C86996949}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8EAAEA35-FC4F-41FD-AA24-0C9C86996949}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8EAAEA35-FC4F-41FD-AA24-0C9C86996949}.Debug|x64.Build.0 = Debug|Any CPU
+		{8EAAEA35-FC4F-41FD-AA24-0C9C86996949}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8EAAEA35-FC4F-41FD-AA24-0C9C86996949}.Debug|x86.Build.0 = Debug|Any CPU
+		{8EAAEA35-FC4F-41FD-AA24-0C9C86996949}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8EAAEA35-FC4F-41FD-AA24-0C9C86996949}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8EAAEA35-FC4F-41FD-AA24-0C9C86996949}.Release|x64.ActiveCfg = Release|Any CPU
+		{8EAAEA35-FC4F-41FD-AA24-0C9C86996949}.Release|x64.Build.0 = Release|Any CPU
+		{8EAAEA35-FC4F-41FD-AA24-0C9C86996949}.Release|x86.ActiveCfg = Release|Any CPU
+		{8EAAEA35-FC4F-41FD-AA24-0C9C86996949}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{49B54C74-8F83-450A-8A65-C4C67962D846} = {723AD819-250C-49A2-8544-017EE4A009D7}
+		{8EAAEA35-FC4F-41FD-AA24-0C9C86996949} = {087E1B64-FA04-4883-8300-191539D43BDE}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B5948FEB-F42A-48D1-9EB9-3B183059A48F}
 	EndGlobalSection
 EndGlobal

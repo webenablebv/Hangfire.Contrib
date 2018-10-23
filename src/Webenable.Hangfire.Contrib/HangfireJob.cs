@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Threading;
 using System.Threading.Tasks;
 using Hangfire;
 using Hangfire.Server;
@@ -29,35 +28,57 @@ namespace Webenable.Hangfire.Contrib
 
         /// <summary>
         /// Gets the perform context instance of this job.
+        /// May be null.
         /// </summary>
         protected PerformContext PerformContext { get; private set; }
 
         /// <summary>
         /// Executes the job.
         /// </summary>
-        /// <param name="performContext">The context in which the job is performed. Populated by Hangfire.</param>
-        /// <param name="cancellationToken">The <see cref="CancellationToken"/>. Populated by Hangfire.</param>
+        /// <param name="performContext">
+        /// The context in which the job is performed. Populated by Hangfire.
+        /// It is safe to pass <c>null</c> in unit tests or other manual scenarios.
+        /// </param>
+        /// <param name="cancellationToken">
+        /// The <see cref="IJobCancellationToken"/>. Populated by Hangfire.
+        /// It is safe to pass <c>null</c> in unit tests or other manual scenarios,
+        /// a new instance of <see cref="JobCancellationToken"/> will be created in that case.
+        /// </param>
         public async Task ExecuteAsync(PerformContext performContext, IJobCancellationToken cancellationToken)
         {
             PerformContext = performContext;
-            var jobId = performContext.BackgroundJob.Id;
+            var jobId = performContext?.BackgroundJob?.Id;
 
-            cancellationToken.ThrowIfCancellationRequested();
-            using (Logger.BeginScope("Job {JobId}", jobId))
-            using (Logger.BeginJobScope(performContext))
+            cancellationToken?.ThrowIfCancellationRequested();
+
+            IDisposable jobScope = null;
+            IDisposable performContextScope = null;
+
+            // Perform context is optional, e.g. may be null in unit tests
+            if (performContext != null)
             {
-                Logger.LogInformation("Starting job {JobId}", jobId);
-                try
+                if (!string.IsNullOrEmpty(jobId))
                 {
-                    await ExecuteCoreAsync(cancellationToken ?? JobCancellationToken.Null);
-                    Logger.LogInformation("Finished job {JobId}", jobId);
+                    jobScope = Logger.BeginScope("Job {JobId}", jobId);
                 }
-                catch (Exception ex)
-                {
-                    Logger.LogError(ex, "Failed executing job {JobId}/{JobName}: {JobException}", jobId, GetType().Name, ex.ToStringDemystified());
-                    throw;
-                }
+
+                performContextScope = Logger.BeginJobScope(performContext);
             }
+
+            Logger.LogInformation("Starting job {JobId}", jobId);
+            try
+            {
+                await ExecuteCoreAsync(cancellationToken ?? new JobCancellationToken(false));
+                Logger.LogInformation("Finished job {JobId}", jobId);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Failed executing job {JobId}/{JobName}: {JobException}", jobId, GetType().Name, ex.ToStringDemystified());
+                throw;
+            }
+
+            performContextScope?.Dispose();
+            jobScope?.Dispose();
         }
 
         /// <summary>
