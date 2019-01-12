@@ -5,9 +5,11 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Webenable.Hangfire.Contrib\Webenable.Hangfire.Contrib.csproj" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.1.1" />
+    <ProjectReference Include="..\Webenable.Hangfire.Contrib.TestApp\Webenable.Hangfire.Contrib.TestApp.csproj" />
+    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="2.1.3" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
-    <PackageReference Include="xunit" Version="2.4.0" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" />
   </ItemGroup>
 </Project>
