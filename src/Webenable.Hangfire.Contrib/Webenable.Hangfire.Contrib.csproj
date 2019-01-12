@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <VersionPrefix>2.0.1</VersionPrefix>
+    <VersionPrefix>2.1.0</VersionPrefix>
     <LangVersion>latest</LangVersion>
     <Description>Useful and opinionated set of ASP.NET Core integration extensions for Hangfire.</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Copyright>© 2018 Webenable, Henk Mollema</Copyright>
+    <Copyright>© 2010 Webenable, Henk Mollema</Copyright>
     <PackageProjectUrl>https://github.com/webenablebv/Hangfire.Contrib</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/webenablebv/Hangfire.Contrib/blob/master/LICENSE</PackageLicenseUrl>
     <RepositoryType>git</RepositoryType>
@@ -15,9 +15,9 @@
     <NoWarn>CS1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Ben.Demystifier" Version="0.1.1" />
-    <PackageReference Include="Hangfire.Core" Version="1.6.20" />
-    <PackageReference Include="Hangfire.AspNetCore" Version="1.6.20" />
+    <PackageReference Include="Ben.Demystifier" Version="0.1.3" />
+    <PackageReference Include="Hangfire.Core" Version="1.6.21" />
+    <PackageReference Include="Hangfire.AspNetCore" Version="1.6.21" />
     <PackageReference Include="Hangfire.Console" Version="1.4.2" />
     <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor" Version="2.1.3" />
