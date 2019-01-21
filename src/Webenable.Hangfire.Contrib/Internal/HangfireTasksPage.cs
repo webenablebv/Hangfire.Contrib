@@ -30,7 +30,7 @@ namespace Webenable.Hangfire.Contrib.Internal
             // Find and create the Razor page instance
             var pageFactoryProvider = sp.GetRequiredService<IRazorPageFactoryProvider>();
             var pageActivator = sp.GetRequiredService<IRazorPageActivator>();
-            var factoryResult = pageFactoryProvider.CreateFactory(ViewEnginePath.ResolvePath("~/Internal/HangfireTasks.cshtml"));
+            var factoryResult = pageFactoryProvider.CreateFactory(ViewEnginePath.ResolvePath("~/Areas/HangfireTasks/HangfireTasks.cshtml"));
             var page = factoryResult.RazorPageFactory.Invoke();
 
             var sb = new StringBuilder();
