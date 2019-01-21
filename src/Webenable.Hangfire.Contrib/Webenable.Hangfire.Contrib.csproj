@@ -5,7 +5,7 @@
     <LangVersion>latest</LangVersion>
     <Description>Useful and opinionated set of ASP.NET Core integration extensions for Hangfire.</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Copyright>© 2010 Webenable, Henk Mollema</Copyright>
+    <Copyright>© 2019 Webenable, Henk Mollema</Copyright>
     <PackageProjectUrl>https://github.com/webenablebv/Hangfire.Contrib</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/webenablebv/Hangfire.Contrib/blob/master/LICENSE</PackageLicenseUrl>
     <RepositoryType>git</RepositoryType>

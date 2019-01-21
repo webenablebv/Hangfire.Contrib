@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Internal;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Webenable.Hangfire.Contrib.Internal
@@ -39,6 +40,7 @@ namespace Webenable.Hangfire.Contrib.Internal
                 var viewContext = new ViewContext
                 {
                     HttpContext = httpContext,
+                    RouteData = new RouteData(),
                     Writer = writer
                 };
                 page.ViewContext = viewContext;
