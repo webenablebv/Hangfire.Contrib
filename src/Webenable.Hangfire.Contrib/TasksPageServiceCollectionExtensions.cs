@@ -11,7 +11,7 @@ namespace Webenable.Hangfire.Contrib
         {
             services.AddHttpContextAccessor();
             services.AddMvcCore()
-                .AddRazorViewEngine(o => o.FileProviders.Add(new EmbeddedFileProvider(typeof(HangfireJob).Assembly, "Webenable.Hangfire.Contrib")));
+                .AddRazorViewEngine();
 
             services.AddSingleton<IStartupFilter, HangfireTasksStartupFilter>();
 
