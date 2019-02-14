@@ -5,7 +5,10 @@ image: Visual Studio 2017
 nuget:
   disable_publish_on_pr: true
 build_script:
-  - ps: .\build.ps1
+  - cmd: dotnet restore
+  - cmd: dotnet build
+  - cmd: dotnet test .\test\Webenable.Hangfire.Contrib.Tests
+  - cmd: dotnet pack .\src\Webenable.Hangfire.Contrib -c Release -o .\artifacts
 test: off
 branches:
   only:

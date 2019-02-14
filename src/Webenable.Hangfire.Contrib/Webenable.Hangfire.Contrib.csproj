@@ -19,7 +19,7 @@
     <PackageReference Include="Hangfire.Core" Version="1.6.22" />
     <PackageReference Include="Hangfire.AspNetCore" Version="1.6.22" />
     <PackageReference Include="Hangfire.Console" Version="1.4.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="2.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="2.2.0" />
   </ItemGroup>
 </Project>
