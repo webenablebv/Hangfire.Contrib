@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using Hangfire.Console;
 using Hangfire.Server;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Internal;
 
 namespace Webenable.Hangfire.Contrib.Internal
 {
@@ -36,9 +36,9 @@ namespace Webenable.Hangfire.Contrib.Internal
             scopeProvider.ForEachScope((scopeValue, scopeState) =>
             {
                 string msg = null;
-                if (scopeValue is FormattedLogValues flv)
+                if (scopeValue is IReadOnlyList<KeyValuePair<string, object>> kvp)
                 {
-                    msg = flv.ToString();
+                    msg = kvp.ToString();
                 }
                 if (scopeValue is string str)
                 {

@@ -3,13 +3,18 @@ using System.Linq;
 using Hangfire.Dashboard;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace Webenable.Hangfire.Contrib.Internal
 {
     public class DashboardAuthorizationFilter : IDashboardAuthorizationFilter
     {
-        private readonly IHostingEnvironment _environment;
+#if NETSTANDARD2_0
+        private readonly Microsoft.AspNetCore.Hosting.IHostingEnvironment _environment;
+#elif NETCOREAPP3_0
+        private readonly IWebHostEnvironment _environment;
+#endif
         private readonly string[] _allowedIps;
         private readonly ILogger<DashboardAuthorizationFilter> _logger;
         private readonly Func<HttpContext, bool> _authorizationCallback;
@@ -19,13 +24,21 @@ namespace Webenable.Hangfire.Contrib.Internal
             _authorizationCallback = authorizationCallback;
             _logger = loggerFactory.CreateLogger<DashboardAuthorizationFilter>();
         }
-
-        public DashboardAuthorizationFilter(IHostingEnvironment environment, string[] allowedIps, ILoggerFactory loggerFactory)
+#if NETSTANDARD2_0
+        public DashboardAuthorizationFilter(Microsoft.AspNetCore.Hosting.IHostingEnvironment environment, string[] allowedIps, ILoggerFactory loggerFactory)
         {
             _environment = environment;
             _allowedIps = allowedIps;
             _logger = loggerFactory.CreateLogger<DashboardAuthorizationFilter>();
         }
+#elif NETCOREAPP3_0
+        public DashboardAuthorizationFilter(IWebHostEnvironment environment, string[] allowedIps, ILoggerFactory loggerFactory)
+        {
+            _environment = environment;
+            _allowedIps = allowedIps;
+            _logger = loggerFactory.CreateLogger<DashboardAuthorizationFilter>();
+        }
+#endif
 
         public bool Authorize(DashboardContext context)
         {
