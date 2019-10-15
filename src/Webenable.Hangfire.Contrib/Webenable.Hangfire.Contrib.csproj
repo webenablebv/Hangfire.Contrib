@@ -16,8 +16,8 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Ben.Demystifier" Version="0.1.4" />
-    <PackageReference Include="Hangfire.Core" Version="1.6.27" />
-    <PackageReference Include="Hangfire.AspNetCore" Version="1.6.27" />
+    <PackageReference Include="Hangfire.Core" Version="1.7.6" />
+    <PackageReference Include="Hangfire.AspNetCore" Version="1.7.6" />
     <PackageReference Include="Hangfire.Console" Version="1.4.2" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
