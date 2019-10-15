@@ -11,19 +11,20 @@ namespace Webenable.Hangfire.Contrib.Internal
     public class DashboardAuthorizationFilter : IDashboardAuthorizationFilter
     {
 #if NETSTANDARD2_0
-        private readonly Microsoft.AspNetCore.Hosting.IHostingEnvironment _environment;
+        private readonly Microsoft.AspNetCore.Hosting.IHostingEnvironment? _environment;
 #elif NETCOREAPP3_0
-        private readonly IWebHostEnvironment _environment;
+        private readonly IWebHostEnvironment? _environment;
 #endif
-        private readonly string[] _allowedIps;
+        private readonly string[]? _allowedIps;
         private readonly ILogger<DashboardAuthorizationFilter> _logger;
-        private readonly Func<HttpContext, bool> _authorizationCallback;
+        private readonly Func<HttpContext, bool>? _authorizationCallback;
 
         public DashboardAuthorizationFilter(Func<HttpContext, bool> authorizationCallback, ILoggerFactory loggerFactory)
         {
             _authorizationCallback = authorizationCallback;
             _logger = loggerFactory.CreateLogger<DashboardAuthorizationFilter>();
         }
+
 #if NETSTANDARD2_0
         public DashboardAuthorizationFilter(Microsoft.AspNetCore.Hosting.IHostingEnvironment environment, string[] allowedIps, ILoggerFactory loggerFactory)
         {
@@ -56,7 +57,7 @@ namespace Webenable.Hangfire.Contrib.Internal
 
         private bool InvokeAuthorizationCallback(HttpContext httpContext)
         {
-            if (_authorizationCallback.Invoke(httpContext))
+            if (_authorizationCallback?.Invoke(httpContext) == true)
             {
                 _logger.LogDebug("Grant access to dashboard");
                 return true;
@@ -68,9 +69,9 @@ namespace Webenable.Hangfire.Contrib.Internal
 
         private bool AuthorizeIpAddress(HttpContext httpContext)
         {
-            if (_environment.IsDevelopment())
+            if (_environment?.IsDevelopment() == true)
             {
-                // Always allow requests in tehe development environment.
+                // Always allow requests in development environment.
                 _logger.LogDebug("Grant access to dashboard in development environment");
                 return true;
             }

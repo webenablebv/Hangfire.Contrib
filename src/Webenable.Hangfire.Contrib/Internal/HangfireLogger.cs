@@ -9,14 +9,7 @@ namespace Webenable.Hangfire.Contrib.Internal
 {
     public class HangfireLogger : ILogger
     {
-        private readonly string _categoryName;
-
-        public HangfireLogger(string categoryName)
-        {
-            _categoryName = categoryName;
-        }
-
-        public IExternalScopeProvider ScopeProvider { get; internal set; }
+        public IExternalScopeProvider? ScopeProvider { get; internal set; }
 
         public IDisposable BeginScope<TState>(TState state) => ScopeProvider?.Push(state) ?? NoopDisposable.Instance;
 
@@ -29,13 +22,13 @@ namespace Webenable.Hangfire.Contrib.Internal
                 return;
             }
 
-            PerformContext ctx = null;
+            PerformContext? ctx = null;
             var msgBuilder = new StringBuilder();
 
             var scopeProvider = ScopeProvider;
-            scopeProvider.ForEachScope((scopeValue, scopeState) =>
+            scopeProvider?.ForEachScope((scopeValue, scopeState) =>
             {
-                string msg = null;
+                string? msg = null;
                 if (scopeValue is IReadOnlyList<KeyValuePair<string, object>> kvp)
                 {
                     msg = kvp.ToString();
@@ -58,7 +51,7 @@ namespace Webenable.Hangfire.Contrib.Internal
 
             if (ctx != null)
             {
-                msgBuilder.Append(msgBuilder.Length == 0 ? "" : " => ").Append(state.ToString());
+                msgBuilder.Append(msgBuilder.Length == 0 ? "" : " => ").Append(state?.ToString());
 
                 var color = ConsoleTextColor.White;
                 switch (logLevel)

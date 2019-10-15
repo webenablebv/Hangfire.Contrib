@@ -7,12 +7,14 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Copyright>© 2019 Webenable, Henk Mollema</Copyright>
     <PackageProjectUrl>https://github.com/webenablebv/Hangfire.Contrib</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/webenablebv/Hangfire.Contrib/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/webenablebv/Hangfire.Contrib</RepositoryUrl>
     <Authors>Webenable B.V.;Henk Mollema</Authors>
     <PackageTags>hangfire;aspnetcore;logging</PackageTags>
     <NoWarn>CS1591</NoWarn>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Ben.Demystifier" Version="0.1.4" />

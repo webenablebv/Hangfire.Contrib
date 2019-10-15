@@ -18,7 +18,7 @@ namespace Webenable.Hangfire.Contrib
         /// Gets or sets the assemblies used to scan for job types.
         /// By default the entry assembly of the application.
         /// </summary>
-        public Assembly[] ScanningAssemblies { get; set; }
+        public Assembly[] ScanningAssemblies { get; set; } = Array.Empty<Assembly>();
 
         /// <summary>
         /// Gets or sets options for the Hangfire dashboard.
@@ -44,13 +44,13 @@ namespace Webenable.Hangfire.Contrib
             /// Gets or sets a callback which gets invoked when authorizing a dashboard request.
             /// If not specified, the default authorization polcy is IP-based using <see cref="AllowedIps"/> when IP-addresses are specified.
             /// </summary>
-            public Func<HttpContext, bool> AuthorizationCallback { get; set; }
+            public Func<HttpContext, bool>? AuthorizationCallback { get; set; }
 
             /// <summary>
             /// Gets or sets the collection of IP-addresses which are allowed to access the Hangfire dashboard.
             /// This is the default authorization policy.
             /// </summary>
-            public string[] AllowedIps { get; set; }
+            public string[]? AllowedIps { get; set; }
         }
     }
 }

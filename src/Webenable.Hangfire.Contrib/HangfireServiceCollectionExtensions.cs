@@ -22,7 +22,7 @@ namespace Webenable.Hangfire.Contrib
         /// <summary>
         /// Adds Hangfire contrib extensions and configures Hangfire with the specified <see cref="IGlobalConfiguration"/> action.
         /// </summary>
-        public static IServiceCollection AddHangfireContrib(this IServiceCollection services, Action<IGlobalConfiguration> configAction)
+        public static IServiceCollection AddHangfireContrib(this IServiceCollection services, Action<IGlobalConfiguration>? configAction)
         {
             services.AddHangfire(c =>
             {
@@ -39,7 +39,7 @@ namespace Webenable.Hangfire.Contrib
             {
                 o.EnableServer = true;
                 o.Dasbhoard.Enabled = true;
-                o.ScanningAssemblies = new[] { Assembly.GetEntryAssembly() };
+                o.ScanningAssemblies = new[] { Assembly.GetEntryAssembly()! };
             });
 
             services.AddSingleton<ILoggerProvider, HangfireLoggerProvider>();

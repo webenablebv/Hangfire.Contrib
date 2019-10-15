@@ -26,8 +26,8 @@ namespace Webenable.Hangfire.Contrib.Internal
             ILogger<HangfireContribStartupFilter> logger)
         {
             _contribOptions = options.Value;
-            _backgroundJobServerOptions = backgroundJobServerOptions?.Value;
-            _dashboardOptions = dashboardOptions?.Value;
+            _backgroundJobServerOptions = backgroundJobServerOptions.Value;
+            _dashboardOptions = dashboardOptions.Value;
             _recurringJobManager = recurringJobManager;
             _logger = logger;
         }
@@ -85,55 +85,53 @@ namespace Webenable.Hangfire.Contrib.Internal
             app.UseHangfireDashboard(options: dashboardOptions);
         }
 
-        private static readonly MethodInfo _executeMethod = typeof(HangfireJob).GetMethod(nameof(HangfireJob.ExecuteAsync));
+        private static readonly MethodInfo HangfireJobExecuteAsyncMethod = typeof(HangfireJob).GetMethod(nameof(HangfireJob.ExecuteAsync))!;
 
         private void RegisterJobs(IApplicationBuilder app)
         {
-            using (var scope = app.ApplicationServices.CreateScope())
+            using var scope = app.ApplicationServices.CreateScope();
+            var sp = scope.ServiceProvider;
+            var hangfireJobType = typeof(HangfireJob);
+            foreach (var assembly in _contribOptions.ScanningAssemblies)
             {
-                var sp = scope.ServiceProvider;
-                var hangfireJobType = typeof(HangfireJob);
-                foreach (var assembly in _contribOptions.ScanningAssemblies)
+                foreach (var candidate in assembly.ExportedTypes)
                 {
-                    foreach (var candidate in assembly.ExportedTypes)
+                    if (candidate.IsAbstract)
                     {
-                        if (candidate.IsAbstract)
-                        {
-                            // Skip abstract types
-                            continue;
-                        }
+                        // Skip abstract types
+                        continue;
+                    }
 
-                        if (hangfireJobType.IsAssignableFrom(candidate) && candidate != hangfireJobType)
+                    if (hangfireJobType.IsAssignableFrom(candidate) && candidate != hangfireJobType)
+                    {
+                        try
                         {
-                            try
+                            var jobInstance = (HangfireJob)ActivatorUtilities.CreateInstance(sp, candidate);
+                            if (!string.IsNullOrEmpty(jobInstance.Schedule))
                             {
-                                var jobInstance = (HangfireJob)ActivatorUtilities.CreateInstance(sp, candidate);
-                                if (!string.IsNullOrEmpty(jobInstance.Schedule))
-                                {
-                                    _logger.LogInformation("Auto-scheduling job {JobName} with schedule {JobSchedule}", candidate.Name, jobInstance.Schedule);
-                                    _recurringJobManager.AddOrUpdate(
-                                        candidate.Name,
-                                        new Job(candidate, _executeMethod, null, null),
-                                        jobInstance.Schedule);
-                                }
-                                else
-                                {
-                                    _logger.LogDebug("Job {JobName} auto-scheduling is disabled", candidate.Name);
-                                }
+                                _logger.LogInformation("Auto-scheduling job {JobName} with schedule {JobSchedule}", candidate.Name, jobInstance.Schedule);
+                                _recurringJobManager.AddOrUpdate(
+                                    candidate.Name,
+                                    new Job(candidate, HangfireJobExecuteAsyncMethod, null, null),
+                                    jobInstance.Schedule);
                             }
-                            catch (Exception ex)
+                            else
                             {
-                                throw new InvalidOperationException($"Unable to activate job {hangfireJobType.Name}. Probably due to missing dependencies. See inner exception for more details.", ex);
+                                _logger.LogDebug("Job {JobName} auto-scheduling is disabled", candidate.Name);
                             }
                         }
-                        else
+                        catch (Exception ex)
                         {
-                            var scheduleAttr = candidate.GetCustomAttribute<AutoScheduleAttribute>();
-                            if (scheduleAttr != null)
-                            {
-                                _logger.LogInformation("Auto-scheduling job {JobName} via [AutoScheduled] attribute with schedule {JobSchedule}", candidate.Name, scheduleAttr.CronExpression);
-                                _recurringJobManager.AddOrUpdate(candidate.Name, new Job(candidate, candidate.GetMethod(scheduleAttr.MethodName)), scheduleAttr.CronExpression);
-                            }
+                            throw new InvalidOperationException($"Unable to activate job {hangfireJobType.Name}. Probably due to missing dependencies. See inner exception for more details.", ex);
+                        }
+                    }
+                    else
+                    {
+                        var scheduleAttr = candidate.GetCustomAttribute<AutoScheduleAttribute>();
+                        if (scheduleAttr != null)
+                        {
+                            _logger.LogInformation("Auto-scheduling job {JobName} via [AutoScheduled] attribute with schedule {JobSchedule}", candidate.Name, scheduleAttr.CronExpression);
+                            _recurringJobManager.AddOrUpdate(candidate.Name, new Job(candidate, candidate.GetMethod(scheduleAttr.MethodName)), scheduleAttr.CronExpression);
                         }
                     }
                 }

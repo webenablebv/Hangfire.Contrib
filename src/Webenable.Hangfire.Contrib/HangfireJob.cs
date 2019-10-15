@@ -30,7 +30,7 @@ namespace Webenable.Hangfire.Contrib
         /// Gets the perform context instance of this job.
         /// May be null.
         /// </summary>
-        protected PerformContext PerformContext { get; private set; }
+        protected PerformContext? PerformContext { get; private set; }
 
         /// <summary>
         /// Executes the job.
@@ -51,8 +51,8 @@ namespace Webenable.Hangfire.Contrib
 
             cancellationToken?.ThrowIfCancellationRequested();
 
-            IDisposable jobScope = null;
-            IDisposable performContextScope = null;
+            IDisposable? jobScope = null;
+            IDisposable? performContextScope = null;
 
             // Perform context is optional, e.g. may be null in unit tests
             if (performContext != null)
@@ -91,6 +91,6 @@ namespace Webenable.Hangfire.Contrib
         /// Gets the schedule for automatically scheduled jobs.
         /// Default is null which means that the job is not automatically scheduled.
         /// </summary>
-        public virtual string Schedule => null;
+        public virtual string? Schedule => null;
     }
 }
