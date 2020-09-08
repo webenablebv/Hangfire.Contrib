@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netcoreapp3.0</TargetFrameworks>
-    <VersionPrefix>2.3.0</VersionPrefix>
+    <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
+    <VersionPrefix>3.0.0</VersionPrefix>
     <LangVersion>latest</LangVersion>
     <Description>Useful and opinionated set of ASP.NET Core integration extensions for Hangfire.</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -17,16 +17,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Ben.Demystifier" Version="0.1.4" />
-    <PackageReference Include="Hangfire.Core" Version="1.7.6" />
-    <PackageReference Include="Hangfire.AspNetCore" Version="1.7.6" />
+    <PackageReference Include="Ben.Demystifier" Version="0.1.6" />
+    <PackageReference Include="Hangfire.Core" Version="1.7.12" />
+    <PackageReference Include="Hangfire.AspNetCore" Version="1.7.12" />
     <PackageReference Include="Hangfire.Console" Version="1.4.2" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="2.2.0" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.0'">
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 </Project>

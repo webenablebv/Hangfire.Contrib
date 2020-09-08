@@ -5,10 +5,7 @@ image: Visual Studio 2019
 nuget:
   disable_publish_on_pr: true
 build_script:
-  - cmd: dotnet restore
-  - cmd: dotnet build
   - cmd: dotnet test .\test\Webenable.Hangfire.Contrib.Tests
-  - cmd: dotnet pack .\src\Webenable.Hangfire.Contrib -c Release -o .\artifacts
 test: off
 branches:
   only:
@@ -18,7 +15,3 @@ init:
 environment:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
   DOTNET_CLI_TELEMETRY_OPTOUT: true
-  CI: true
-artifacts:
-- path: .\artifacts\**\*.nupkg
-  name: NuGet

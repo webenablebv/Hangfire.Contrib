@@ -68,11 +68,7 @@ namespace Webenable.Hangfire.Contrib.Internal
                 else if (_contribOptions.Dasbhoard.AllowedIps?.Length > 0)
                 {
                     _logger.LogInformation("Configuring Hangfire IP-based dashboard authorization");
-#if NETSTANDARD2_0
-                    dashboardAuthorizationFilter = new DashboardAuthorizationFilter(app.ApplicationServices.GetRequiredService<IHostingEnvironment>(), _contribOptions.Dasbhoard.AllowedIps, loggerFactory);
-#elif NETCOREAPP3_0
                     dashboardAuthorizationFilter = new DashboardAuthorizationFilter(app.ApplicationServices.GetRequiredService<IWebHostEnvironment>(), _contribOptions.Dasbhoard.AllowedIps, loggerFactory);
-#endif
                 }
                 else
                 {

@@ -6,7 +6,7 @@ Useful and opinionated set of ASP.NET Core integration extensions for Hangfire.
 | [![Windows Build status](https://ci.appveyor.com/api/projects/status/49lhxdj0nuu5x9fe?svg=true)](https://ci.appveyor.com/project/henkmollema/hangfire-contrib) | [![Linux Build Status](https://travis-ci.org/webenablebv/Hangfire.Contrib.svg?branch=master)](https://travis-ci.org/webenablebv/Hangfire.Contrib) |
 
 ## Introduction
-Hangfire.Contrib provides a set of useful extensions to provide a nice Hangfire integration experience in ASP.NET Core 2.1, 2.2 and 3.0.
+Hangfire.Contrib provides a set of useful extensions to provide a nice Hangfire integration experience in ASP.NET Core.
 
 ### Key features
 - Automatic scheduling of jobs
@@ -29,7 +29,7 @@ public class Startup
 {
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddHangfireContrib(c => 
+        services.AddHangfireContrib(c =>
         {
             // Configure storage and any other Hangfire settings
             c.UseStorage(...);
@@ -130,7 +130,7 @@ protected override async Task ExecuteCoreAsync(CancellationToken cancellationTok
 When passing an exception to the logger the stack trace will be printed in the console, after being 'demystified' by [Ben.Demystifier](https://github.com/benaadams/Ben.Demystifier).
 
 ### Dashboard authorization
-By default the dashboard is only accessible from local requests. Hangfire.Contrib offers an IP-based dashboard authorization filter out of the box. 
+By default the dashboard is only accessible from local requests. Hangfire.Contrib offers an IP-based dashboard authorization filter out of the box.
 You can also provide your own authorization logic.  Use the `HangfireContribOptions` class to configure the authorization policy.
 
 #### Configuring IP addresses
