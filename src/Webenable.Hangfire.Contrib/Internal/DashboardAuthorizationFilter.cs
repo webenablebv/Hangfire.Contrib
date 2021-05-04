@@ -46,11 +46,11 @@ namespace Webenable.Hangfire.Contrib.Internal
         {
             if (_authorizationCallback?.Invoke(httpContext) == true)
             {
-                _logger.LogDebug("Grant access to dashboard");
+                _logger.LogDebug("Grant access to Hangfire dashboard");
                 return true;
             }
 
-            _logger.LogWarning("Deny access to dashboard");
+            _logger.LogWarning("Deny access to Hangfire dashboard");
             return false;
         }
 
@@ -59,8 +59,14 @@ namespace Webenable.Hangfire.Contrib.Internal
             if (_environment?.IsDevelopment() == true)
             {
                 // Always allow requests in development environment.
-                _logger.LogDebug("Grant access to dashboard in development environment");
+                _logger.LogDebug("Grant access to Hangfire dashboard in development environment");
                 return true;
+            }
+
+            if (_allowedIps == null || _allowedIps.Length == 0)
+            {
+                _logger.LogWarning("Deny access to dashboard: no allowed IP addresses configured");
+                return false;
             }
 
             // Resolve remote IP addresses from the forwarded headers as well as the default header.
@@ -69,19 +75,20 @@ namespace Webenable.Hangfire.Contrib.Internal
                 .Headers["X-Forwarded-For"]
                 .ToString()
                 .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(r => r.Trim())
-                .Append(httpContext.Connection.RemoteIpAddress.ToString());
+                .Append(httpContext.Connection.RemoteIpAddress?.ToString())
+                .Select(r => r?.Trim())
+                .Where(x => !string.IsNullOrEmpty(x));
 
             foreach (var ip in ips)
             {
                 if (_allowedIps.Contains(ip))
                 {
-                    _logger.LogDebug("Grant access to dashboard for IP-address {IpAddress}", ip);
+                    _logger.LogDebug("Grant access to Hangfire dashboard for IP-address {IpAddress}", ip);
                     return true;
                 }
             }
 
-            _logger.LogWarning("Deny access to dashboard for IP-addresses {IpAddresses}", string.Join(", ", ips));
+            _logger.LogWarning("Deny access to Hangfire dashboard for IP-addresses {IpAddresses}", string.Join(", ", ips));
             return false;
         }
     }

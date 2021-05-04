@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Webenable.Hangfire.Contrib.Internal
 {
-    public class HangfireLoggerProvider : ILoggerProvider, ISupportExternalScope
+    public sealed class HangfireLoggerProvider : ILoggerProvider, ISupportExternalScope
     {
         private readonly ConcurrentDictionary<string, HangfireLogger> _loggers = new ConcurrentDictionary<string, HangfireLogger>();
 
