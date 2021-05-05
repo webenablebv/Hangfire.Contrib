@@ -53,18 +53,12 @@ namespace Webenable.Hangfire.Contrib.Internal
             {
                 msgBuilder.Append(msgBuilder.Length == 0 ? "" : " => ").Append(state?.ToString());
 
-                var color = ConsoleTextColor.White;
-                switch (logLevel)
+                var color = logLevel switch
                 {
-                    case LogLevel.Critical:
-                    case LogLevel.Error:
-                        color = ConsoleTextColor.Red;
-                        break;
-
-                    case LogLevel.Warning:
-                        color = ConsoleTextColor.Yellow;
-                        break;
-                }
+                    LogLevel.Critical or LogLevel.Error => ConsoleTextColor.Red,
+                    LogLevel.Warning => ConsoleTextColor.Yellow,
+                    _ => ConsoleTextColor.White,
+                };
 
                 ctx.WriteLine(color, msgBuilder.ToString());
             }
@@ -72,7 +66,7 @@ namespace Webenable.Hangfire.Contrib.Internal
 
         private class NoopDisposable : IDisposable
         {
-            public static NoopDisposable Instance = new NoopDisposable();
+            public static NoopDisposable Instance = new();
 
             public void Dispose()
             {

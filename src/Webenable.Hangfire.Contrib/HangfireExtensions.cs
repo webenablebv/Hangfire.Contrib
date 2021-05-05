@@ -21,7 +21,7 @@ namespace Webenable.Hangfire.Contrib
 
         private class NoopDisposable : IDisposable
         {
-            public static NoopDisposable Instance = new NoopDisposable();
+            public static NoopDisposable Instance = new();
 
             public void Dispose()
             {

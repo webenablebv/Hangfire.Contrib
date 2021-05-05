@@ -5,7 +5,7 @@ namespace Webenable.Hangfire.Contrib.Internal
 {
     public sealed class HangfireLoggerProvider : ILoggerProvider, ISupportExternalScope
     {
-        private readonly ConcurrentDictionary<string, HangfireLogger> _loggers = new ConcurrentDictionary<string, HangfireLogger>();
+        private readonly ConcurrentDictionary<string, HangfireLogger> _loggers = new();
 
         private IExternalScopeProvider? _scopeProvider;
 
