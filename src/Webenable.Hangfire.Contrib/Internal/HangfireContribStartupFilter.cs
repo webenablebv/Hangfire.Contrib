@@ -118,7 +118,7 @@ namespace Webenable.Hangfire.Contrib.Internal
                         }
                         catch (Exception ex)
                         {
-                            throw new InvalidOperationException($"Unable to activate job {candidate.Name}. This may be due to missing dependencies. See the inner exception for more details.", ex);
+                            _logger.LogError(ex, "Unable to activate job {JobName}: {ExceptionMessage}", candidate.Name, ex.Message);
                         }
                     }
                     else
