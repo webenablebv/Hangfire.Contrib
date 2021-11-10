@@ -22,45 +22,54 @@ namespace Webenable.Hangfire.Contrib.Internal
                 return;
             }
 
-            PerformContext? ctx = null;
-            var msgBuilder = new StringBuilder();
-
-            var scopeProvider = ScopeProvider;
-            scopeProvider?.ForEachScope((scopeValue, scopeState) =>
+            try
             {
-                string? msg = null;
-                if (scopeValue is IReadOnlyList<KeyValuePair<string, object>> kvp)
-                {
-                    msg = kvp.ToString();
-                }
-                if (scopeValue is string str)
-                {
-                    msg = str;
-                }
-                if (msg != null && !msg.StartsWith("Job"))
-                {
-                    msgBuilder.Append(msgBuilder.Length == 0 ? "" : " => ").Append(msg);
-                    return;
-                }
+                PerformContext? ctx = null;
+                var msgBuilder = new StringBuilder();
 
-                if (scopeValue is PerformContext performContext)
+                var scopeProvider = ScopeProvider;
+                scopeProvider?.ForEachScope((scopeValue, scopeState) =>
                 {
-                    ctx = performContext;
-                }
-            }, state);
+                    string? msg = null;
+                    if (scopeValue is IReadOnlyList<KeyValuePair<string, object>> kvp)
+                    {
+                        msg = kvp.ToString();
+                    }
+                    if (scopeValue is string str)
+                    {
+                        msg = str;
+                    }
+                    if (msg != null && !msg.StartsWith("Job"))
+                    {
+                        msgBuilder.Append(msgBuilder.Length == 0 ? "" : " => ").Append(msg);
+                        return;
+                    }
 
-            if (ctx != null)
+                    if (scopeValue is PerformContext performContext)
+                    {
+                        ctx = performContext;
+                    }
+                }, state);
+
+                if (ctx != null)
+                {
+                    msgBuilder.Append(msgBuilder.Length == 0 ? "" : " => ").Append(state?.ToString());
+
+                    var color = logLevel switch
+                    {
+                        LogLevel.Critical or LogLevel.Error => ConsoleTextColor.Red,
+                        LogLevel.Warning => ConsoleTextColor.Yellow,
+                        _ => ConsoleTextColor.White,
+                    };
+
+                    ctx.WriteLine(color, msgBuilder.ToString());
+                }
+            }
+            catch (Exception ex)
             {
-                msgBuilder.Append(msgBuilder.Length == 0 ? "" : " => ").Append(state?.ToString());
-
-                var color = logLevel switch
-                {
-                    LogLevel.Critical or LogLevel.Error => ConsoleTextColor.Red,
-                    LogLevel.Warning => ConsoleTextColor.Yellow,
-                    _ => ConsoleTextColor.White,
-                };
-
-                ctx.WriteLine(color, msgBuilder.ToString());
+                // Logging should never throw an exception
+                // Write the exceptions to the console for visiblity
+                Console.WriteLine($"Failed to write Hangfire log: {ex}");
             }
         }
 
