@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
-    <VersionPrefix>3.1.0</VersionPrefix>
+    <VersionPrefix>3.1.1</VersionPrefix>
     <LangVersion>latest</LangVersion>
     <Description>Useful and opinionated set of ASP.NET Core integration extensions for Hangfire.</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -18,8 +18,8 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Ben.Demystifier" Version="0.4.1" />
-    <PackageReference Include="Hangfire.Core" Version="1.7.22" />
-    <PackageReference Include="Hangfire.AspNetCore" Version="1.7.22" />
+    <PackageReference Include="Hangfire.Core" Version="1.7.27" />
+    <PackageReference Include="Hangfire.AspNetCore" Version="1.7.27" />
     <PackageReference Include="Hangfire.Console" Version="1.4.2" />
   </ItemGroup>
 </Project>
