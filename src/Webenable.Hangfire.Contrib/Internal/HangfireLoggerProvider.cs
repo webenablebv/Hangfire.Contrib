@@ -1,21 +1,20 @@
 ﻿using System.Collections.Concurrent;
 using Microsoft.Extensions.Logging;
 
-namespace Webenable.Hangfire.Contrib.Internal
+namespace Webenable.Hangfire.Contrib.Internal;
+
+public sealed class HangfireLoggerProvider : ILoggerProvider, ISupportExternalScope
 {
-    public sealed class HangfireLoggerProvider : ILoggerProvider, ISupportExternalScope
+    private readonly ConcurrentDictionary<string, HangfireLogger> _loggers = new();
+
+    private IExternalScopeProvider? _scopeProvider;
+
+    public ILogger CreateLogger(string categoryName) =>
+        _loggers.GetOrAdd(categoryName, new HangfireLogger { ScopeProvider = _scopeProvider });
+
+    public void Dispose()
     {
-        private readonly ConcurrentDictionary<string, HangfireLogger> _loggers = new();
-
-        private IExternalScopeProvider? _scopeProvider;
-
-        public ILogger CreateLogger(string categoryName) =>
-            _loggers.GetOrAdd(categoryName, new HangfireLogger { ScopeProvider = _scopeProvider });
-
-        public void Dispose()
-        {
-        }
-
-        public void SetScopeProvider(IExternalScopeProvider scopeProvider) => _scopeProvider = scopeProvider;
     }
+
+    public void SetScopeProvider(IExternalScopeProvider scopeProvider) => _scopeProvider = scopeProvider;
 }

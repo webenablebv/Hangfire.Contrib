@@ -8,127 +8,126 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Webenable.Hangfire.Contrib.Internal
-{
-    public class HangfireContribStartupFilter : IStartupFilter
-    {
-        private readonly HangfireContribOptions _contribOptions;
-        private readonly BackgroundJobServerOptions _backgroundJobServerOptions;
-        private readonly DashboardOptions _dashboardOptions;
-        private readonly IRecurringJobManager _recurringJobManager;
-        private readonly ILogger<HangfireContribStartupFilter> _logger;
+namespace Webenable.Hangfire.Contrib.Internal;
 
-        public HangfireContribStartupFilter(
-            IOptions<HangfireContribOptions> options,
-            IOptions<BackgroundJobServerOptions> backgroundJobServerOptions,
-            IOptions<DashboardOptions> dashboardOptions,
-            IRecurringJobManager recurringJobManager,
-            ILogger<HangfireContribStartupFilter> logger)
+public class HangfireContribStartupFilter : IStartupFilter
+{
+    private readonly HangfireContribOptions _contribOptions;
+    private readonly BackgroundJobServerOptions _backgroundJobServerOptions;
+    private readonly DashboardOptions _dashboardOptions;
+    private readonly IRecurringJobManager _recurringJobManager;
+    private readonly ILogger<HangfireContribStartupFilter> _logger;
+
+    public HangfireContribStartupFilter(
+        IOptions<HangfireContribOptions> options,
+        IOptions<BackgroundJobServerOptions> backgroundJobServerOptions,
+        IOptions<DashboardOptions> dashboardOptions,
+        IRecurringJobManager recurringJobManager,
+        ILogger<HangfireContribStartupFilter> logger)
+    {
+        _contribOptions = options.Value;
+        _backgroundJobServerOptions = backgroundJobServerOptions.Value;
+        _dashboardOptions = dashboardOptions.Value;
+        _recurringJobManager = recurringJobManager;
+        _logger = logger;
+    }
+
+    public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next) =>
+        app =>
         {
-            _contribOptions = options.Value;
-            _backgroundJobServerOptions = backgroundJobServerOptions.Value;
-            _dashboardOptions = dashboardOptions.Value;
-            _recurringJobManager = recurringJobManager;
-            _logger = logger;
+            if (_contribOptions.EnableServer)
+            {
+                _logger.LogInformation("Enabling Hangfire server");
+                app.UseHangfireServer(_backgroundJobServerOptions);
+            }
+
+            if (_contribOptions.Dasbhoard.Enabled)
+            {
+                ConfigureDashboard(app);
+            }
+
+            RegisterJobs(app);
+
+            next(app);
+        };
+
+    private void ConfigureDashboard(IApplicationBuilder app)
+    {
+        _logger.LogInformation("Enabling Hangfire dashboard");
+        var dashboardOptions = _dashboardOptions ?? new DashboardOptions();
+        if (_contribOptions.Dasbhoard.EnableAuthorization)
+        {
+            var loggerFactory = app.ApplicationServices.GetRequiredService<ILoggerFactory>();
+
+            DashboardAuthorizationFilter dashboardAuthorizationFilter;
+            if (_contribOptions.Dasbhoard.AuthorizationCallback != null)
+            {
+                _logger.LogInformation("Configuring Hangfire dashboard authorization with custom callback");
+                dashboardAuthorizationFilter = new DashboardAuthorizationFilter(_contribOptions.Dasbhoard.AuthorizationCallback, loggerFactory);
+            }
+            else if (_contribOptions.Dasbhoard.AllowedIps?.Length > 0)
+            {
+                _logger.LogInformation("Configuring Hangfire IP-based dashboard authorization");
+                dashboardAuthorizationFilter = new DashboardAuthorizationFilter(app.ApplicationServices.GetRequiredService<IWebHostEnvironment>(), _contribOptions.Dasbhoard.AllowedIps, loggerFactory);
+            }
+            else
+            {
+                throw new InvalidOperationException("No custom authorization callback or allowed IP-addresses configured for Hangfire dashboard authorization.");
+            }
+
+            dashboardOptions.Authorization = new[] { dashboardAuthorizationFilter };
         }
 
-        public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next) =>
-            app =>
-            {
-                if (_contribOptions.EnableServer)
-                {
-                    _logger.LogInformation("Enabling Hangfire server");
-                    app.UseHangfireServer(_backgroundJobServerOptions);
-                }
+        app.UseHangfireDashboard(options: dashboardOptions);
+    }
 
-                if (_contribOptions.Dasbhoard.Enabled)
-                {
-                    ConfigureDashboard(app);
-                }
+    private static readonly MethodInfo HangfireJobExecuteAsyncMethod = typeof(HangfireJob).GetMethod(nameof(HangfireJob.ExecuteAsync))!;
 
-                RegisterJobs(app);
-
-                next(app);
-            };
-
-        private void ConfigureDashboard(IApplicationBuilder app)
+    private void RegisterJobs(IApplicationBuilder app)
+    {
+        using var scope = app.ApplicationServices.CreateScope();
+        var sp = scope.ServiceProvider;
+        var hangfireJobType = typeof(HangfireJob);
+        foreach (var assembly in _contribOptions.ScanningAssemblies)
         {
-            _logger.LogInformation("Enabling Hangfire dashboard");
-            var dashboardOptions = _dashboardOptions ?? new DashboardOptions();
-            if (_contribOptions.Dasbhoard.EnableAuthorization)
+            foreach (var candidate in assembly.ExportedTypes)
             {
-                var loggerFactory = app.ApplicationServices.GetRequiredService<ILoggerFactory>();
-
-                DashboardAuthorizationFilter dashboardAuthorizationFilter;
-                if (_contribOptions.Dasbhoard.AuthorizationCallback != null)
+                if (candidate.IsAbstract)
                 {
-                    _logger.LogInformation("Configuring Hangfire dashboard authorization with custom callback");
-                    dashboardAuthorizationFilter = new DashboardAuthorizationFilter(_contribOptions.Dasbhoard.AuthorizationCallback, loggerFactory);
+                    // Skip abstract types
+                    continue;
                 }
-                else if (_contribOptions.Dasbhoard.AllowedIps?.Length > 0)
+
+                if (hangfireJobType.IsAssignableFrom(candidate) && candidate != hangfireJobType)
                 {
-                    _logger.LogInformation("Configuring Hangfire IP-based dashboard authorization");
-                    dashboardAuthorizationFilter = new DashboardAuthorizationFilter(app.ApplicationServices.GetRequiredService<IWebHostEnvironment>(), _contribOptions.Dasbhoard.AllowedIps, loggerFactory);
+                    try
+                    {
+                        var jobInstance = (HangfireJob)ActivatorUtilities.CreateInstance(sp, candidate);
+                        if (!string.IsNullOrEmpty(jobInstance.Schedule))
+                        {
+                            _logger.LogInformation("Auto-scheduling job {JobName} with schedule {JobSchedule}", candidate.Name, jobInstance.Schedule);
+                            _recurringJobManager.AddOrUpdate(
+                                candidate.Name,
+                                new Job(candidate, HangfireJobExecuteAsyncMethod, null, null),
+                                jobInstance.Schedule);
+                        }
+                        else
+                        {
+                            _logger.LogDebug("Job {JobName} auto-scheduling is disabled", candidate.Name);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Unable to activate job {JobName}: {ExceptionMessage}", candidate.Name, ex.Message);
+                    }
                 }
                 else
                 {
-                    throw new InvalidOperationException("No custom authorization callback or allowed IP-addresses configured for Hangfire dashboard authorization.");
-                }
-
-                dashboardOptions.Authorization = new[] { dashboardAuthorizationFilter };
-            }
-
-            app.UseHangfireDashboard(options: dashboardOptions);
-        }
-
-        private static readonly MethodInfo HangfireJobExecuteAsyncMethod = typeof(HangfireJob).GetMethod(nameof(HangfireJob.ExecuteAsync))!;
-
-        private void RegisterJobs(IApplicationBuilder app)
-        {
-            using var scope = app.ApplicationServices.CreateScope();
-            var sp = scope.ServiceProvider;
-            var hangfireJobType = typeof(HangfireJob);
-            foreach (var assembly in _contribOptions.ScanningAssemblies)
-            {
-                foreach (var candidate in assembly.ExportedTypes)
-                {
-                    if (candidate.IsAbstract)
+                    var scheduleAttr = candidate.GetCustomAttribute<AutoScheduleAttribute>();
+                    if (scheduleAttr != null)
                     {
-                        // Skip abstract types
-                        continue;
-                    }
-
-                    if (hangfireJobType.IsAssignableFrom(candidate) && candidate != hangfireJobType)
-                    {
-                        try
-                        {
-                            var jobInstance = (HangfireJob)ActivatorUtilities.CreateInstance(sp, candidate);
-                            if (!string.IsNullOrEmpty(jobInstance.Schedule))
-                            {
-                                _logger.LogInformation("Auto-scheduling job {JobName} with schedule {JobSchedule}", candidate.Name, jobInstance.Schedule);
-                                _recurringJobManager.AddOrUpdate(
-                                    candidate.Name,
-                                    new Job(candidate, HangfireJobExecuteAsyncMethod, null, null),
-                                    jobInstance.Schedule);
-                            }
-                            else
-                            {
-                                _logger.LogDebug("Job {JobName} auto-scheduling is disabled", candidate.Name);
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.LogError(ex, "Unable to activate job {JobName}: {ExceptionMessage}", candidate.Name, ex.Message);
-                        }
-                    }
-                    else
-                    {
-                        var scheduleAttr = candidate.GetCustomAttribute<AutoScheduleAttribute>();
-                        if (scheduleAttr != null)
-                        {
-                            _logger.LogInformation("Auto-scheduling job {JobName} via [AutoScheduled] attribute with schedule {JobSchedule}", candidate.Name, scheduleAttr.CronExpression);
-                            _recurringJobManager.AddOrUpdate(candidate.Name, new Job(candidate, candidate.GetMethod(scheduleAttr.MethodName)), scheduleAttr.CronExpression);
-                        }
+                        _logger.LogInformation("Auto-scheduling job {JobName} via [AutoScheduled] attribute with schedule {JobSchedule}", candidate.Name, scheduleAttr.CronExpression);
+                        _recurringJobManager.AddOrUpdate(candidate.Name, new Job(candidate, candidate.GetMethod(scheduleAttr.MethodName)), scheduleAttr.CronExpression);
                     }
                 }
             }
